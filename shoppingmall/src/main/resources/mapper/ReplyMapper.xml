@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- com.myapp.bbs.dao 패키지 안의 replyMapper.java를 여기서 입력하겠다는 설정  -->
+<mapper namespace="com.myapp.shoppingmall.dao.ReplyMapper">
+
+	<!-- 댓글 등록 -->
+    <insert id="enroll" parameterType="ReplyVO"> <!-- application.properties에 설정을 하지 않았다면 parameterType="com.myapp.bbs.model.ReplyVO" 라고 적었야함 -->
+		insert into reply(reply_bno, content, writer) 
+		values (#{reply_bno}, #{content}, #{writer});
+    </insert>
+	
+	<!-- 댓글 리스트 불러오기 -->
+    <select id="getReplyList" resultType="ReplyVO">
+     	select * 
+     	from reply
+     	where reply_bno = #{reply_bno}
+    </select>
+     
+     <!-- 댓글 수정 -->
+     <update id="modify" parameterType="ReplyVO">
+     	update reply 
+     	set  content = #{content}, updated_at = now()
+     	where reply_no = #{reply_no}
+     </update>
+     
+     <!-- 댓글 삭제 -->
+     <delete id="delete">
+     	delete from reply 
+     	where reply_no = #{reply_no}
+     </delete>
+     
+</mapper>

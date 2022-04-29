@@ -1,0 +1,49 @@
+<nav th:fragment="nav-front" class="navbar navbar-expand-md navbar-dark bg-dark p-1">
+  <a class="navbar-brand" style="color: white" th:href="@{/}">🛒SHOP</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarShop" aria-controls="navbarShop" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarShop">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active" th:each="page : ${cpages}">
+        <a class="nav-link" th:if="${page.slug != 'home'}" th:href="@{'/' + ${page.slug}}" th:text="${page.title}"></a>
+      </li>
+    </ul>
+    <!-- 로그인 정보가 없으면 회원가입, 로그인표시 -->
+    <ul class="navbar-nav" th:if="${principal == null}">
+      <li class="nav-item active">
+        <a class="nav-link" th:href="@{'/register'}" th:text="회원가입"></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" th:href="@{'/login'}" th:text="로그인"></a>
+      </li>
+    </ul>
+    <!-- 로그인 정보가 있으면 로그아웃(Security) 표시 -->
+    <form class="" th:if="${principal != null}" th:action="@{/logout}" method="post">
+      <span class="text-white" th:text="${'🖐하이, ' + principal}"></span>
+      <button class="btn btn-secondary ml-2">로그아웃</button>
+    </form>
+  </div>
+</nav>
+
+<nav th:fragment="nav-admin" class="navbar navbar-expand-md navbar-dark bg-dark">
+  <a class="navbar-brand active" style="color: white" th:href="@{/}">📱관리자</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarShop" aria-controls="navbarShop" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarShop">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" th:href="@{/admin/pages}">Pages</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" th:href="@{/admin/categories}">Categories</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" th:href="@{/admin/products}">Products</a>
+      </li>
+    </ul>
+  </div>
+</nav>

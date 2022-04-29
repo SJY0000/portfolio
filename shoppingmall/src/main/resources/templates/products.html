@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="/fragments/head :: head-front"></head>
+  <body>
+    <nav th:replace="/fragments/nav :: nav-front"></nav>
+    <main role="main" class="container-fluid mt-5">
+      <div class="row">
+        <div th:replace="/fragments/categories :: categories"></div>
+        <div class="col"></div>
+        <div class="col-8">
+          <!-- CategoryName이 있으면 출력하고 없으면 모든제품 출력-->
+          <h2 class="display-3 mb-5" th:text="${categoryName} ?: '모든상품'"></h2>
+          <div class="row">
+            <div class="col-4" th:each="product : ${products}">
+              <p>
+                <img th:src="@{'/media/' + ${product.image}}" style="width: 200px" />
+              </p>
+              <h4 th:text="${product.name}"></h4>
+              <div class="desc" th:utext="${product.description}"></div>
+              <p th:text="${product.price}+ '원'"></p>
+
+              <div style="position: relative">
+                <p>
+                  <a class="btn btn-primary addToCart" th:attr="data-id=${product.id}" th:href="@{'/cart/add/' + ${product.id}}">장바구니추가</a>
+                </p>
+                <div class="btn btn-sm btn-success hide productAdded">추가됨!</div>
+              </div>
+            </div>
+          </div>
+          <!-- 부트스트랩 페이지네이션 -->
+          <nav class="mt-3" th:if="${count > perPage}">
+            <ul class="pagination">
+              <!-- @{${#httpServletRequest.requestURI}} 현재 페이지 주소, 지금은 @{/category/category.slug} -->
+              <li class="page-item" th:if="${page > 0}">
+                <a th:href="@{${#httpServletRequest.requestURI}} + '?page=__${page-1}__'" class="page-link">이전</a>
+              </li>
+              <!-- sequence(a,b) a와 b 사이의 숫자들을 가지고 있음-->
+              <li class="page-item" th:each="number : ${#numbers.sequence(0, pageCount-1)}" th:classappend="${page==number} ? 'active' : ''">
+                <a th:href="@{${#httpServletRequest.requestURI}} + '?page=__${number}__'" class="page-link" th:text="${number+1}"></a>
+              </li>
+              <li class="page-item" th:if="${page < pageCount-1}">
+                <a th:href="@{${#httpServletRequest.requestURI}} + '?page=__${page+1}__'" class="page-link">다음</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </main>
+    <footer th:replace="/fragments/footer :: footer"></footer>
+    <script>
+      // 장바구니추가버튼을 눌렀을 때 이벤트 추가
+      $('a.addToCart').click(function (e) {
+        e.preventDefault(); // 원래 a 태그의 기능인 주소이동을 멈춤
+        let $this = $(this); // JQuery 변수, $변수명, 클릭한 장바구니추가버튼
+
+        let id = $this.attr('data-id'); // 상품 id 값
+        let url = '/cart/add/' + id;
+        // Ajax get 메소드, 주소는 url, 보내는 데이터 없음 {}, 결과는 data
+        $.get(url, {}, function (data) {
+          $('div.cart').html(data); // Cart화면 덮어쓰기
+        }).done(function () {
+          $this.parent().parent().find('div.productAdded').fadeIn(); // parent()는 상위태그로 이동, find()는 자식태그들 중에서 찾음, 희마하게 보여주기
+          setTimeout(function () {
+            $this.parent().parent().find('div.productAdded').fadeOut(); // 1초뒤에 사라짐
+          }, 1000);
+        });
+      });
+    </script>
+  </body>
+</html>

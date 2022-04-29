@@ -1,0 +1,30 @@
+package com.myapp.shoppingmall.entities;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+import lombok.Data;
+
+//실제 Table과 매칭
+@Entity
+@Table(name = "categories")
+@Data // Get, Set, Construct, toSring 생성됨
+public class Category {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	
+	@NotBlank(message = "이름을 입력해주세요.")
+	@Size(min = 2, message = "최소 2글자 이상 입력해주세요.")
+	private String name;
+	
+	private String slug;
+	
+	private int sorting;
+}

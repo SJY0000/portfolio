@@ -1,0 +1,29 @@
+span.error {
+  /* 에러 메시지를 표시할 색상 */
+  color: coral !important;
+}
+table.sorting tr:not(.home) {
+  cursor: pointer; /* 옮길 수 있는 행만 마우스 손가락 표시*/
+}
+.ui-state-highlight {
+  border: 1px dashed #ccc;
+}
+
+/* ck 에디터 높이 */
+.ck.ck-content {
+  height: 15em; /*글자 15개 높이 정도*/
+}
+
+div.productAdded {
+  position: absolute;
+  bottom: 5px;
+  left: 10em;
+}
+
+div.hide {
+  display: none;
+}
+
+li.list-group-item Choice {
+  background-color: gray;
+}

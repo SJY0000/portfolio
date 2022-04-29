@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="/fragments/head :: head-admin"></head>
+  <body>
+    <nav th:replace="/fragments/nav :: nav-admin"></nav>
+    <main role="main" class="container">
+      <div class="display-2">Products</div>
+      <a th:href="@{/admin/products/add}" class="btn btn-primary my-3">추가하기</a>
+      <div th:if="${message}" th:object="${message}" th:text="${message}" th:class="'alert ' + ${alertClass}"></div>
+      <div th:if="${!products.empty}">
+        <table class="table sorting" id="products">
+          <tr>
+            <th>상품명</th>
+            <th>이미지</th>
+            <th>카테고리</th>
+            <th>가 격</th>
+            <th>수 정</th>
+            <th>삭 제</th>
+          </tr>
+          <tr th:each="product : ${products}">
+            <td th:text="${product.name}"></td>
+            <td>
+              <!-- 이미지 파일이름이 한글이면 이미지 파일을 찾지를 못 함, 영어로 해야함-->
+              <img th:src="@{'/media/' + ${product.image}}" style="height: 2em" />
+            </td>
+            <!-- Thymeleaf문법에서 ${}안에 한번 더 ${} 사용하려면 중복사용하는 곳 앞,뒤에 __(언더바) 2번 앞에다가 입력해줘야함-->
+            <td th:text="${cateIdAndName[__${product.categoryId}__]}"></td>
+            <td th:text="${product.price} + '원'"></td>
+            <td><a th:href="@{'/admin/products/edit/' + ${product.id}}" style="color: blue" class="fw-bold">수정</a></td>
+            <td><a th:href="@{'/admin/products/delete/' + ${product.id}}" class="deleteConfirm fw-bold" style="color: red">삭제</a></td>
+          </tr>
+        </table>
+        <!-- 부트스트랩 페이지네이션 -->
+        <nav class="mt-3" th:if="${count > perPage}">
+          <ul class="pagination">
+            <li class="page-item" th:if="${page > 0}">
+              <a th:href="@{/admin/products/} + '?page=__${page-1}__'" class="page-link">이전</a>
+            </li>
+            <!-- sequence(a,b) a와 b 사이의 숫자들을 가지고 있음-->
+            <li class="page-item" th:each="number : ${#numbers.sequence(0, pageCount-1)}" th:classappend="${page==number} ? 'active' : ''">
+              <a th:href="@{/admin/products/} + '?page=__${number}__'" class="page-link" th:text="${number+1}"></a>
+            </li>
+            <li class="page-item" th:if="${page < pageCount-1}">
+              <a th:href="@{/admin/products/} + '?page=__${page+1}__'" class="page-link">다음</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div th:if="${products.empty}">
+        <div class="display-4">현재 페이지가 없습니다.</div>
+      </div>
+    </main>
+    <footer th:replace="/fragments/footer :: footer"></footer>
+  </body>
+</html>

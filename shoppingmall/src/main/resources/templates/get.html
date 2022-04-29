@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments/head :: head-front"></head>
+  <body class="g-sidenav-show bg-gray-200">
+    <aside th:replace="fragments/aside :: 어사이드"></aside>
+    <!-- 메인 컨텐트 시작 -->
+    <main class="main-content mt-0">
+      <section>
+        <div class="page-header min-vh-100">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-10 ms-auto me-auto">
+                <div class="card card-plain">
+                  <div class="card-body bg-white">
+                    <table class="table table-condensed">
+                      <tr>
+                        <th>번호</th>
+                        <td th:text="${board.bno}"></td>
+                        <th>작성일</th>
+                        <td th:text="${#temporals.format(board.regdate, 'yyyy-MM-dd a hh:mm:ss')}"></td>
+                      </tr>
+                      <tr>
+                        <th>작성자</th>
+                        <td th:text="${board.writer}"></td>
+                        <th>수정일</th>
+                        <td th:text="${#temporals.format(board.updateDate, 'yyyy-MM-dd a hh:mm:ss')}"></td>
+                      </tr>
+                      <tr>
+                        <th>제목</th>
+                        <td colspan="3" th:text="${board.title}"></td>
+                      </tr>
+                      <tr>
+                        <th>내용</th>
+                        <td colspan="3" th:text="${board.content}"></td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="card-footer bg-white text-center pt-0 px-lg-2 px-1">
+                    <a th:href="@{/board} + '?pageNum=__${cri.pageNum}__'" class="btn btn-success page">목록</a>
+                    <!-- <a th:href="@{'/board/modify/' + ${board.bno}}" class="btn btn-secondary">수정</a> -->
+                    <a th:href="@{/board/modify(bno=${board.bno})} + '&pageNum=__${cri.pageNum}__'" class="btn btn-secondary page">수정</a>
+                    <button onclick="deleteConfirm()" class="btn btn-danger">삭제</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-2">
+              <!-- 댓글 입력 폼-->
+              <div class="col-md-10 me-auto ms-auto">
+                <div class="card card-body">
+                  <div class="row">
+                    <div class="col-3">
+                      <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">글쓴이</label>
+                        <input type="text" class="form-control" id="writer" required />
+                      </div>
+                      <div class="text-center">
+                        <button id="reply-btn" class="btn bg-gradient-primary w-100 mb-0">댓글달기</button>
+                      </div>
+                    </div>
+                    <div class="col-9">
+                      <div class="input-group input-group-outline mb-0">
+                        <div class="input-group input-group-dynamic">
+                          <textarea id="content" class="form-control" rows="4" placeholder="댓글 내용을 적어주세요." required></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 댓글리스트-->
+            <div class="row mt-2">
+              <div class="col-md-10 me-auto ms-auto">
+                <div class="card card-plain">
+                  <ul class="list-group" id="reply-list"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 오른쪽 숨김창 , JS 링크들 -->
+    <hidden th:replace="fragments/hidden :: 숨김창"></hidden>
+    <jslink th:replace="fragments/jslink :: 링크"></jslink>
+    <script th:src="@{/js/Fetch-API.js}"></script>
+    <script>
+      function deleteConfirm() {
+        if (confirm('정말로 삭제할까요?')) {
+          location.href = '/board/delete?bno=' + '[[${board.bno}]]';
+        }
+      }
+
+      // a태그들에 키워드를 추가 자바스크립트로 요청
+      //목록,수정 클릭시
+      const links = document.querySelectorAll('a.page');
+      links.forEach((link) => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          let keyword = '[[${cri.keyword}]]'; //키워드가 있을경우 키워드 추가
+          let type = '[[${cri.type}]]';
+          if (keyword.trim()) {
+            keyword = '&keyword=' + keyword;
+            type = '&type=' + type;
+          }
+          location.href = this.getAttribute('href') + keyword + type;
+        });
+      });
+
+      // fetch-api 객체 선언하기
+      const http = new EasyHTTP();
+
+      // 댓글달기 버튼 클릭 시 이벤트
+      const replyButton = document.getElementById('reply-btn');
+      replyButton.addEventListener('click', function () {
+        const data = {
+          reply_bno: '[[${board.bno}]]',
+          content: document.getElementById('content').value,
+          writer: document.getElementById('writer').value,
+        };
+        http
+          .post('/reply', data)
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
+
+        location.reload();
+      });
+
+      // updateReply(this)에서 this는 현재 선택한 객체(자신)
+      function updateReply(el) {
+        // el은 매개변수
+        const 댓글내용 = el.parentElement.previousElementSibling.previousElementSibling;
+        const 댓글수정 = el.parentElement.previousElementSibling;
+        const 삭제버튼 = el.nextElementSibling;
+
+        if (el.textContent === '수정') {
+          댓글내용.style.display = 'none';
+          댓글수정.style.display = 'block';
+          삭제버튼.style.visibility = 'hidden';
+          el.textContent = '수정 완료';
+        } else {
+          // 수정완료로 바뀐 버튼을 눌렀을 때
+          const data = {
+            reply_no: el.dataset.id,
+            content: 댓글수정.value,
+          };
+          http
+            .put('/reply', data)
+            .then((res) => (댓글내용.textContent = res.content))
+            .catch((err) => console.log(err));
+
+          댓글내용.style.display = 'block';
+          댓글수정.style.display = 'none';
+          삭제버튼.style.visibility = 'visible';
+          el.textContent = '수정';
+
+          location.reload();
+        }
+      }
+
+      function deleteReply(e) {
+        if (confirm('정말 삭제하시겠습니까?')) {
+          http
+            .delete('/reply/' + e.dataset.id)
+            .then((res) => console.log(res))
+            .catch((err) => console.log(err));
+
+          e.parentElement.parentElement.remove();
+        }
+      }
+
+      function replyListView(items) {
+        // 댓글을 입력할 ul태그 객체 선택
+        const replyList = document.getElementById('reply-list');
+        let lis = '';
+
+        items.forEach(function (item) {
+          let writer = item.writer;
+          let content = item.content;
+          let updateTime = item.updated_at;
+          let id = item.reply_no;
+
+          // ``(벡틱)은 변수를 바로 넣을 수 있음, 문자열 취급
+          let li = `<li class="list-group-item mt-2" style="position: relative">
+              <div>${writer}  ( ${updateTime} ) </div>
+              <p class="mb-0">${content}</p>
+              <textarea class="w-100" style="display:none">${content}</textarea>
+              <div style="position: absolute; top: 10px; right: 10px">
+                <button class="badge bg-gradient-info ms-auto" onclick="updateReply(this)" data-id="${id}">수정</button>
+                <button class="badge bg-gradient-danger" onclick="deleteReply(this)" data-id="${id}">삭제</button>
+              </div>
+            </li>`;
+
+          lis += li; // lis에 li를 계속 더해준다
+        });
+        // 댓글들 출력
+        replyList.innerHTML = lis;
+      }
+
+      // html문서가 준비되면 실행하기(자동실행)
+      document.addEventListener('DOMContentLoaded', function () {
+        // 댓글들 출력하기
+        http
+          .get('/reply/' + '[[${board.bno}]]')
+          .then((data) => replyListView(data))
+          .catch((err) => console.log(err));
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments/head :: head-front"></head>
+  <body class="g-sidenav-show bg-gray-200">
+    <nav th:replace="fragments/nav :: nav-front"></nav>
+    <!-- 메인 컨텐트 시작 -->
+    <main class="main-content mt-0">
+      <section>
+        <div class="page-header min-vh-100">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-10 ms-auto me-auto">
+                <div class="card card-plain">
+                  <div class="card-header">
+                    <h4 class="font-weight-bolder">새 게시글 등록</h4>
+                    <p class="mb-0">새로운 게시글을 등록해주세요.</p>
+                  </div>
+                  <div class="card-body bg-white">
+                    <form role="form" th:action="@{/enrollNotice}" method="post" th:object="${board}">
+                      <input type="hidden" id="kinds" name="kinds" th:value="${kinds}" />
+                      <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">제목</label>
+                        <input type="text" class="form-control" th:field="*{title}" required />
+                      </div>
+                      <div class="input-group input-group-outline mb-3">
+                        <div class="input-group input-group-dynamic">
+                          <textarea th:field="*{content}" class="form-control" rows="5" placeholder="내용을 적어주세요." spellcheck="false" required></textarea>
+                        </div>
+                      </div>
+                      <div class="input-group input-group-outline mb-3">
+                        <input type="hidden" class="form-control" id="writer" name="writer" th:value="${principal}" />
+                      </div>
+                      <div class="text-center">
+                        <button type="submit" class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">게시하기</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 오른쪽 숨김창 , JS 링크들 -->
+    <hidden th:replace="fragments/hidden :: 숨김창"></hidden>
+    <jslink th:replace="fragments/jslink :: 링크"></jslink>
+  </body>
+</html>

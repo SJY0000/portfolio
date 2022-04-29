@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- com.myapp.bbs.dao 패키지 안의 BoardMapper.java를 여기서 입력하겠다는 설정  -->
+<mapper namespace="com.myapp.shoppingmall.dao.BoardMapper">
+
+<!-- 검색 조건문 -->
+	<sql id="criteria">
+		<trim prefix="where (" suffix=")" prefixOverrides="OR">
+			<foreach collection="typeArr" item="type">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							title like concat('%',#{keyword},'%')
+						</when>
+						<when test="type == 'C'.toString()">
+							content like concat('%',#{keyword},'%')
+						</when>
+						<when test="type == 'W'.toString()">
+							writer like concat('%',#{keyword},'%')
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
+
+	<!-- board 테이블에 데이터(공지사항) 넣기 -->
+    <insert id="enrollNotice" parameterType="BoardVO"> <!-- application.properties에 설정을 하지 않았다면 resultType="com.myapp.bbs.model.BoardVO" 라고 적었야함 -->
+		insert into board(title, content, writer, kinds) 
+		values (#{title}, #{content}, #{writer}, 1);
+    </insert>
+    
+   	<!-- board 테이블에 데이터(게시판) 넣기 -->
+    <insert id="enrollBoard" parameterType="BoardVO"> <!-- application.properties에 설정을 하지 않았다면 resultType="com.myapp.bbs.model.BoardVO" 라고 적었야함 -->
+		insert into board(title, content, writer, kinds) 
+		values (#{title}, #{content}, #{writer}, 0);
+    </insert>
+	
+	<!-- board 테이블에 등록된 모든 글 불러오기 -->
+    <select id="getList" resultType="BoardVO">
+     	select * 
+     	from board
+    </select>
+    <!-- board 테이블에 등록된 공지사항 모든 글 불러오기 -->
+    <select id="getListNoticePaging" resultType="BoardVO">
+    	select *
+    	from ( 
+    		select bno, title, writer, regdate, updatedate, kinds
+    		from board
+    		where kinds=1
+    		<if test="keyword != null">
+    			<include refid="criteria"></include>
+    		</if>
+    		
+    		order by bno desc
+    		) as T1
+    	limit #{skip}, #{amount}
+    </select>
+    
+    <!-- 게시물 목록(페이징) : skip, amount는 Criteria 객체에 입력됨 -->
+    <!--  concat은 문자열을 합쳐줌 -->
+    <select id="getListPaging" resultType="BoardVO">
+    	select *
+    	from ( 
+    		select bno, title, writer, regdate, updatedate, kinds
+    		from board
+    		where kinds=0
+    		<if test="keyword != null">
+    			<include refid="criteria"></include>
+    		</if>
+    		
+    		order by bno desc
+    		) as T1
+    	limit #{skip}, #{amount}
+    </select>
+     
+     <!-- board 테이블의 글 불러오기 -->
+     <select id="getPage" resultType="BoardVO">
+     	select * 
+     	from board 
+     	where bno=#{bno}
+     </select>
+     
+     <!-- board 테이블의 글 수정하기 -->
+     <update id="modify">
+     	update board 
+     	set title=#{title}, content=#{content}, updatedate=now()
+     	where bno=#{bno}
+     </update>
+     
+     <!-- board 테이블의 글 삭제하기 -->
+     <delete id="delete">
+     	delete from board 
+     	where bno=#{bno}
+     </delete>
+     
+     <!-- 총 게시글 갯수 구하기 -->
+     <!-- keyword값이 있으면 검색된 총 결과 -->
+     <select id="getTotal" resultType="int">
+     	select count(*)
+     	from board
+     	    <if test="keyword != null">
+    			<include refid="criteria"></include>
+    		</if>
+     </select>
+</mapper>
