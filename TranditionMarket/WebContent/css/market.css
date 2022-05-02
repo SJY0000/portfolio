@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;700&display=swap');
+
+table.dataTable tbody td {
+  word-break: keep-all !important;
+  vertical-align: middle !important;
+}
+
+* {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+th {
+  font-weight: 700;
+}
+table tbody tr td {
+  font-weight: 300;
+}
+div h1 {
+  font-weight: 700;
+}
+div button {
+  color: white;
+  font-weight: bold;
+}
+#boardname {
+  font-weight: 700;
+}
+div div .bg-secondary {
+  font-weight: 700;
+}
+div .rowcolumn div {
+  border: 1px solid gray;
+}
+div .rowcolumn {
+  text-align: center;
+}
+

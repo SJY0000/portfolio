@@ -1,0 +1,72 @@
+@charset "UTF-8";
+
+#adminTable {
+	border: 1px solid black;
+	text-align: center;
+	padding: 5px;
+}
+
+#adminTable th {
+	background-color: azure;
+}
+
+table {
+	width: 100%;
+}
+
+.myTable {
+	width: 100%;
+	text-align: center;
+}
+
+.myTable td {
+	padding: 3px;
+}
+
+.profileImg {
+	border: 3px solid black;
+	border-radius: 60px;
+	margin-left: 25px;
+}
+
+.imgBox {
+	width: 378px;
+	height: 220px;
+}
+
+.bmContainer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+}
+
+.bmCard {
+	border-radius: 24px;
+	border: solid 1px black;
+	padding: 10px;
+	margin: 20px;
+	width: 25em;
+	height: 400px;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#wrap {
+	min-height: 100%;
+	position: relative;
+	padding-bottom: 120px;
+}
+
+#footer {
+	position: absolute;
+	bottom: 0;
+	height: 60px;
+	width: 100%;
+	color: white;
+	background: #212529;
+}
