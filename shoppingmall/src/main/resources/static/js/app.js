@@ -5,7 +5,7 @@ $(function () {
     if (!confirm('삭제하겠습니까?')) return false; // 취소시 삭제안됨
   });
 
-  // page conenet ck에디터 추가
+  // page content ck에디터 추가
   if ($('#content').length) {
     // JQuery에서는 태그선택시 무조건 true이기 때문에 length(없으면 0, 있으면 1)를 사용
     ClassicEditor.create(document.querySelector('#content')).catch((error) => {
@@ -13,19 +13,14 @@ $(function () {
     });
   }
   // product description ck에디터 추가
-  if ($('#description').length) {
+  if ($('#cview').length) {
     // JQuery에서는 태그선택시 무조건 true이기 때문에 length(없으면 0, 있으면 1)를 사용
-    ClassicEditor.create(document.querySelector('#description')).catch((error) => {
+    ClassicEditor.create(document.querySelector('#cview')).catch((error) => {
       console.error(error);
     });
   }
 
   $('a.nav-link').on('mouseenter', function () {
     $('a.nav-link').closest('li').toggleClass('Choice');
-  });
-
-  const asd = document.querySelector('.c');
-  asd.addEventListener('click', function (e) {
-    asd.toggleClass('.hide');
   });
 });

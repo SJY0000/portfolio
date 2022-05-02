@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head th:replace="fragments/head :: head-front"></head>
   <body class="g-sidenav-show bg-gray-200">
-    <aside th:replace="fragments/aside :: 어사이드"></aside>
     <!-- 메인 컨텐트 시작 -->
     <main class="main-content mt-0">
       <section>
@@ -31,15 +30,15 @@
                       </tr>
                       <tr>
                         <th>내용</th>
-                        <td colspan="3" th:text="${board.content}"></td>
+                        <td colspan="3" th:utext="${board.content}"></td>
                       </tr>
                     </table>
                   </div>
                   <div class="card-footer bg-white text-center pt-0 px-lg-2 px-1">
                     <a th:href="@{/board} + '?pageNum=__${cri.pageNum}__'" class="btn btn-success page">목록</a>
                     <!-- <a th:href="@{'/board/modify/' + ${board.bno}}" class="btn btn-secondary">수정</a> -->
-                    <a th:href="@{/board/modify(bno=${board.bno})} + '&pageNum=__${cri.pageNum}__'" class="btn btn-secondary page">수정</a>
-                    <button onclick="deleteConfirm()" class="btn btn-danger">삭제</button>
+                    <a th:if="${board.writer} == __${principal}__" th:href="@{/modify(bno=${board.bno})} + '&pageNum=__${cri.pageNum}__'" class="btn btn-secondary page">수정</a>
+                    <button th:if="${board.writer} == __${principal}__" onclick="deleteConfirm()" class="btn btn-danger">삭제</button>
                   </div>
                 </div>
               </div>
@@ -61,7 +60,7 @@
                     <div class="col-9">
                       <div class="input-group input-group-outline mb-0">
                         <div class="input-group input-group-dynamic">
-                          <textarea id="content" class="form-control" rows="4" placeholder="댓글 내용을 적어주세요." required></textarea>
+                          <textarea id="rcontent" class="form-control" rows="4" placeholder="댓글 내용을 적어주세요." required></textarea>
                         </div>
                       </div>
                     </div>
@@ -81,17 +80,18 @@
         </div>
       </section>
     </main>
-
-    <!-- 오른쪽 숨김창 , JS 링크들 -->
-    <hidden th:replace="fragments/hidden :: 숨김창"></hidden>
-    <jslink th:replace="fragments/jslink :: 링크"></jslink>
+    <footer th:replace="/fragments/footer :: footer"></footer>
     <script th:src="@{/js/Fetch-API.js}"></script>
     <script>
       function deleteConfirm() {
         if (confirm('정말로 삭제할까요?')) {
-          location.href = '/board/delete?bno=' + '[[${board.bno}]]';
+          location.href = '/delete?bno=' + '[[${board.bno}]]';
         }
       }
+
+      ClassicEditor.create(document.querySelector('#editor')).catch((error) => {
+        console.error(error);
+      });
 
       // a태그들에 키워드를 추가 자바스크립트로 요청
       //목록,수정 클릭시
@@ -117,7 +117,7 @@
       replyButton.addEventListener('click', function () {
         const data = {
           reply_bno: '[[${board.bno}]]',
-          content: document.getElementById('content').value,
+          content: document.getElementById('rcontent').value,
           writer: document.getElementById('writer').value,
         };
         http

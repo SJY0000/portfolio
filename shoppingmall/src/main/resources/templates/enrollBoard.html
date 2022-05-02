@@ -22,8 +22,8 @@
                         <label class="form-label">제목</label>
                         <input type="text" class="form-control" th:field="*{title}" required />
                       </div>
-                      <div class="input-group input-group-outline mb-3">
-                        <div class="input-group input-group-dynamic">
+                      <div class="input-group input-group-outline mb-3 w-auto justify-content-center">
+                        <div class="input-group input-group-dynamic w-auto">
                           <textarea th:field="*{content}" class="form-control" rows="5" placeholder="내용을 적어주세요." spellcheck="false" required></textarea>
                         </div>
                       </div>
@@ -42,7 +42,7 @@
         </div>
       </section>
     </main>
-
+    <footer th:replace="/fragments/footer :: footer"></footer>
     <!-- 오른쪽 숨김창 , JS 링크들 -->
     <hidden th:replace="fragments/hidden :: 숨김창"></hidden>
     <jslink th:replace="fragments/jslink :: 링크"></jslink>
