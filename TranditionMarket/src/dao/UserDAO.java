@@ -97,4 +97,24 @@ public class UserDAO {
 			return -1;
 		}
 	}
+	
+	public int findUno(String userID) {
+		String SQL = "SELECT * from USER where id = ?";
+		
+		try {
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, userID);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				int uno = rs.getInt("uno");
+				return uno;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return 0;
+	}
 }

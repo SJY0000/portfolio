@@ -86,4 +86,43 @@ public class BookmarkDAO {
 		}
 		return url;
 	}
+	
+	public boolean insertBookmark(int uno, int mno) {
+		String sql = "insert into bookmark (`mno`, `uno`) values (?, ?)";
+		boolean isSaved = false;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, mno);
+			pstmt.setInt(2, uno);
+			
+			isSaved = pstmt.executeUpdate() > 0;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return isSaved;
+	}
+	
+	public boolean bookmark(int uno, int mno) {
+		String sql = "select * from bookmark where mno = ? and uno = ?";
+		boolean isExist = false;
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, mno);
+			pstmt.setInt(2, uno);
+			
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				isExist = true;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return isExist;
+	}
 }

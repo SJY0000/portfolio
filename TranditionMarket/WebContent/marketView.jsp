@@ -9,6 +9,7 @@
 <c:import url="header.jsp">
 	<c:param name="title" value="전알사"></c:param>
 </c:import>
+
 <div class="p-3 p-3">
 	<div class="container">
 		<%
@@ -21,10 +22,10 @@
 			}
 		%>
 		
-		<div class="row featurette mt-5">
+		<div class="a row featurette mt-5">
 			<div class="col-md-7 order-md-2">
 				<h2 class="featurette-heading">
-					<div class="px-2 fw-bold"><%=viewMK.getMname()%>&nbsp&nbsp<i class="bi bi-star"></i></div>
+					<div class="px-2 fw-bold"><%=viewMK.getMname()%>&nbsp&nbsp <button type="button" id="bmark" class="btn btn-outline-secondary" onclick="bookmark()"><i class="bi bi-star"></i></button></div>
 				</h2>
 				<br>
 				<p class="lead">
@@ -95,5 +96,57 @@
 	</div>
 
 </div>
-
 <c:import url="footer.jsp"></c:import>
+<script>
+	const userID = '<%=session.getAttribute("userID")%>';
+	const mno = '<%=request.getParameter("mno")%>';
+	const bmark = document.getElementById('bmark');
+	$('document').ready(function() {
+		$.ajax({
+			method: 'post',
+			url: 'Bookmark',
+			data: { cmd: 'check',
+							userId:userID,
+							mno:mno},
+		}).done(function(data) {
+			if (data == 'true') {
+				bmark.classList.add('active');
+			}
+		})
+	});
+
+	function bookmark() {
+		if(bmark.classList.contains('active')) {
+			deletebookmark();
+			bmark.classList.remove('active');
+		} else {
+			addbookmark();
+			bmark.classList.add('active');
+		}
+	}
+	
+	function deletebookmark() {
+		console.log('즐겨찾기 삭제')
+		$.ajax({
+			type: "POST",
+			url: "Bookmark",
+			data: { cmd: 'delete',
+							userId: userID,
+							mno: mno },
+			dataType: 'json',
+		})
+	}
+	
+	function addbookmark() {
+		console.log('즐겨찾기 추가');
+		$.ajax({
+				type: "POST",
+				url: "Bookmark",
+				data: { userID: userID,
+								mno: mno,
+								cmd: 'insert' }, 
+				dataType: 'json',
+			});
+	}
+	</script>
+

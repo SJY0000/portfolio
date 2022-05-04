@@ -21,7 +21,6 @@
 <title>전알사</title>
 </head>
 <body>
-<div id="wrap">
 	<%
 		String id = (String) session.getAttribute("userID");
 		String mainId = id+"님 환영합니다.";
